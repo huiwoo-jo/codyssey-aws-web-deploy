@@ -1,0 +1,20 @@
+*   Trying 13.124.219.14:80...
+* Connected to 13.124.219.14 (13.124.219.14) port 80
+> GET / HTTP/1.1
+> Host: 13.124.219.14
+> User-Agent: curl/8.7.1
+> Accept: */*
+> 
+* Request completely sent off
+< HTTP/1.1 200 OK
+< Server: nginx/1.30.4
+< Date: Mon, 14 Sep 2026 07:13:12 GMT
+< Content-Type: text/html
+< Content-Length: 896
+< Last-Modified: Mon, 20 Jul 2026 22:30:14 GMT
+< Connection: keep-alive
+< ETag: "6a5ea176-380"
+< Accept-Ranges: bytes
+< 
+{ [896 bytes data]
+* Connection #0 to host 13.124.219.14 left intact
