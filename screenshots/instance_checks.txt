@@ -1,0 +1,21 @@
+$ whoami && hostname -I
+ec2-user
+10.0.1.188 
+
+$ systemctl is-active nginx
+active
+
+$ curl -s -o /dev/null -w "%{http_code}\n" http://localhost
+200
+
+$ curl -s http://localhost/health
+OK
+
+$ curl -s -o /dev/null -w "%{http_code}\n" https://example.com   # outbound internet
+200
+
+$ cat /etc/nginx/default.d/health.conf
+location = /health {
+    default_type text/plain;
+    return 200 "OK\n";
+}

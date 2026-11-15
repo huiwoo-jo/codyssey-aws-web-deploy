@@ -1,0 +1,45 @@
+## 0. 정상 상태
+$ curl -s -o /dev/null -w '%{http_code}\n' http://13.125.53.24/health
+200
+
+## 1. 장애 주입: SG 80 규칙 제거
+$ aws ec2 revoke-security-group-ingress --group-id sg-06cc1b31e3ecde061 --protocol tcp --port 80 --cidr 0.0.0.0/0 --query Return
+True
+
+## 2. 증상: 외부 요청 timeout
+$ time curl -v -m 5 http://13.125.53.24/health
+*   Trying 13.125.53.24:80...
+* Connection timed out after 5001 milliseconds
+* Closing connection
+curl: (28) Connection timed out after 5001 milliseconds
+
+## 3. 검증 A: 서버 내부는 정상인가 (SSH 22는 열려 있음)
+$ ssh ec2-user@13.125.53.24 'systemctl is-active nginx; curl -s http://localhost/health; sudo tail -n 3 /var/log/nginx/access.log'
+active
+OK
+116.35.8.x - - [15/Nov/2026:08:26:57 +0000] "GET /health HTTP/1.1" 200 3 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko)" "-"
+116.35.8.x - - [15/Nov/2026:08:27:26 +0000] "GET /health HTTP/1.1" 200 3 "-" "curl/8.7.1" "-"
+::1 - - [15/Nov/2026:08:27:38 +0000] "GET /health HTTP/1.1" 200 3 "-" "curl/8.21.0" "-"
+
+## 3. 검증 B: SG 인바운드 규칙
+$ aws ec2 describe-security-groups --group-ids sg-06cc1b31e3ecde061 --query 'SecurityGroups[0].IpPermissions[].[IpProtocol,FromPort,IpRanges[0].CidrIp]' --output text
+tcp	22	116.35.8.x/32
+
+## 3. 비교: 포트는 열려 있고 프로세스가 없을 때 (같은 서버의 미사용 포트 8080을 22와 같은 방식으로 내 IP에만 임시 개방)
+(8080/tcp ← 내 IP/32 임시 허용)
+$ time curl -v -m 5 http://13.125.53.24:8080/
+*   Trying 13.125.53.24:8080...
+* connect to 13.125.53.24 port 8080 from <내 PC 사설IP> port 65110 failed: Connection refused
+(8080 규칙 즉시 제거)
+
+## 4. 조치: SG 80 규칙 복구
+$ aws ec2 authorize-security-group-ingress --group-id sg-06cc1b31e3ecde061 --protocol tcp --port 80 --cidr 0.0.0.0/0
+True
+
+## 5. 결과
+$ curl -s -w '\nHTTP_CODE:%{http_code}\n' http://13.125.53.24/health
+OK
+
+HTTP_CODE:200
+tcp	80	0.0.0.0/0
+tcp	22	116.35.8.x/32
