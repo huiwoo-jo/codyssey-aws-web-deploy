@@ -226,7 +226,8 @@ SG에서 80 규칙을 지우자 외부 요청이 timeout 났습니다. 서버 �
 ### IAM 최소권한
 
 - 리소스 작업은 루트 계정이 아닌 IAM 사용자 `codyssey-mission2`로만 했습니다.
-  루트 계정은 이 IAM 사용자와 정책을 만드는 일, 청구서를 확인하는 일에만 썼습니다. 루트 액세스 키는 실습 후 삭제했습니다. ([트러블슈팅 이슈 2](docs/troubleshooting.md))
+- **제약과 다른 점:** 과제는 루트 계정 사용을 예외 없이 금지하지만, 이 실습에서는 루트 계정을 두 번 썼습니다. 실습용 IAM 사용자·정책을 만드는 부트스트랩과 청구서 확인입니다. 둘 다 리소스 작업은 아니지만 제약을 그대로 지킨 것은 아니므로 **편차로 기록**합니다. 루트 액세스 키는 실습 후 삭제했습니다. ([트러블슈팅 이슈 2](docs/troubleshooting.md))
+  - 제약을 지키려면 루트로 관리용 IAM 사용자를 한 번만 만들고, 이후 IAM 사용자 생성과 청구서 확인(계정 설정에서 IAM 사용자의 결제 정보 접근 허용)까지 그 사용자로 해야 합니다.
 - 이 사용자에게는 커스텀 정책 `codyssey-ec2-lab` 하나만 붙였습니다. ([정책 원문](iam/codyssey-ec2-lab-policy.json))
   - `ec2:Describe*`와 실습에 필요한 생성·삭제·연결·태그 API만 나열했습니다.
   - `aws:RequestedRegion = ap-northeast-2` 조건으로 서울 리전에서만 동작합니다.
@@ -262,7 +263,8 @@ vpc-0d5228ec567a13ddd          ← 서울 리전 조회는 허용
 **이슈 3** — 미션의 "서버에 올렸는데 외부에서 안 들어와요" 상황을 직접 재현했습니다.
 - 서버 안에서는 Nginx가 정상 응답했고, Nginx 접속 로그에는 timeout된 요청이 남지 않았습니다. 요청이 서버까지 오지 못했다는 뜻입니다.
 - 같은 서버의 빈 포트(8080)를 잠깐 열어 요청하면 timeout이 아니라 즉시 `Connection refused`가 납니다.
-- 정리하면 **timeout은 SG·라우팅 문제, refused는 서버 프로세스 문제**입니다. ([원문 로그](screenshots/troubleshooting_sg80_transcript.txt))
+- 이 테스트에서는 **timeout이 SG의 80 인바운드 규칙 누락으로 발생**했고, 프로세스가 없는 빈 포트는 **refused**를 반환했습니다. ([원문 로그](screenshots/troubleshooting_sg80_transcript.txt))
+- 일반적으로 timeout은 SG·NACL·라우팅을, refused는 서버 프로세스를 먼저 의심하는 **출발점**입니다. 호스트 방화벽이 거절하면 프로세스가 떠 있어도 refused가 날 수 있고, 서버 과부하로도 timeout이 날 수 있으므로 원인은 따로 검증해서 확정해야 합니다.
 
 ---
 

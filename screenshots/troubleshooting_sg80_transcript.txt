@@ -19,6 +19,7 @@ active
 OK
 116.35.8.x - - [15/Nov/2026:08:26:57 +0000] "GET /health HTTP/1.1" 200 3 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko)" "-"
 116.35.8.x - - [15/Nov/2026:08:27:26 +0000] "GET /health HTTP/1.1" 200 3 "-" "curl/8.7.1" "-"
+(↑ 08:27:26 항목 = 0단계 정상 요청(실습자 PC curl). SG 차단 후의 timeout 요청은 기록되지 않음 → 요청이 Nginx까지 도달하지 못함)
 ::1 - - [15/Nov/2026:08:27:38 +0000] "GET /health HTTP/1.1" 200 3 "-" "curl/8.21.0" "-"
 
 ## 3. 검증 B: SG 인바운드 규칙

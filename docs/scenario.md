@@ -217,9 +217,12 @@ aws ec2 describe-security-groups --group-ids $SG_ID \
 
 ```bash
 # 키 페어 (개인키는 재발급 불가 → 안전하게 보관, 저장소에 커밋 금지)
+# ~/.ssh가 없는 새 계정에서도 저장되도록 먼저 만들고, 실패하면 여기서 멈춘다
+mkdir -p ~/.ssh && chmod 700 ~/.ssh
 aws ec2 create-key-pair --key-name codyssey-mission2-key \
-  --query KeyMaterial --output text > ~/.ssh/codyssey-mission2-key.pem
-chmod 400 ~/.ssh/codyssey-mission2-key.pem
+  --query KeyMaterial --output text > ~/.ssh/codyssey-mission2-key.pem \
+  && chmod 400 ~/.ssh/codyssey-mission2-key.pem \
+  || { echo "키 페어 생성/저장 실패 — 다음 단계로 진행하지 마세요"; return 1 2>/dev/null || exit 1; }
 
 # 최신 Amazon Linux 2023 AMI (SSM 권한 없이 EC2 API로 조회)
 AMI_ID=$(aws ec2 describe-images --owners amazon \
@@ -263,7 +266,15 @@ echo "INSTANCE=$INSTANCE_ID PUBLIC_IP=$PUBLIC_IP"
 ssh -i ~/.ssh/codyssey-mission2-key.pem ec2-user@$PUBLIC_IP
 ```
 
-인스턴스 안에서 실행합니다.
+인스턴스 안에서 실행합니다. `instance-status-ok`는 인스턴스 상태만 보는 것이라, user-data(Nginx 설치)가 아직 진행 중일 수 있습니다. 먼저 cloud-init이 끝나기를 기다립니다.
+
+```bash
+cloud-init status --wait        # status: done 이 나와야 함
+# status: error 라면 아래 로그로 원인을 확인하고, 해결 전에는 검증 단계로 넘어가지 않는다
+sudo tail -n 50 /var/log/cloud-init-output.log
+```
+
+그다음 서비스를 확인합니다.
 
 ```bash
 systemctl is-active nginx                                       # active

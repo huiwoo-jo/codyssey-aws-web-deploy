@@ -37,7 +37,8 @@ AdministratorAccess를 주지 않았기 때문에, 이 사용자로 `aws s3 ls`�
 - [x] Public Subnet 아웃바운드 인터넷 통신 (인스턴스 내부 `curl https://example.com` -> 200)
 - [x] EC2 1대, SSH 접속(ec2-user), Nginx 설치/기동, 내부 `curl http://localhost` -> 200
 - [x] 보안 그룹: 80은 0.0.0.0/0, 22는 내 IP만, 0.0.0.0/0 전체 포트 허용 규칙 없음
-- [x] IAM: EC2 전용 정책만 부착, AdministratorAccess 없음, 루트 계정 미사용(부트스트랩 1회 제외)
+- [x] IAM: EC2 전용 정책만 부착, AdministratorAccess 없음
+- [ ] 루트 계정 미사용: **편차** — 리소스 작업은 IAM 사용자로 했지만, IAM 사용자 생성(부트스트랩)과 청구서 확인에 루트를 사용함
 - [x] 외부 접속 검증 (B: `/health` 200 "OK", A: 브라우저 접속도 확인)
 - [x] 실습 종료 후 EC2/EBS/EIP/IGW/VPC 삭제 및 CLI 재조회로 확인
 - [x] 아키텍처 다이어그램, 트러블슈팅 보고서, 리소스 정리 체크리스트
