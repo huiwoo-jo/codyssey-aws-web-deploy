@@ -1,3 +1,10 @@
-OK
+$ curl -i http://13.125.53.24/health
+HTTP/1.1 200 OK
+Server: nginx/1.30.6
+Date: Sun, 15 Nov 2026 08:23:39 GMT
+Content-Type: text/plain
+Content-Length: 3
+Connection: keep-alive
 
+OK
 HTTP_CODE:200

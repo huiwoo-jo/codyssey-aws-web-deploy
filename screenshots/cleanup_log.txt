@@ -1,0 +1,67 @@
+# 리소스 정리 실행 로그 (2026-11-15T08:28:41Z)
+$ aws ec2 terminate-instances --instance-ids i-01cdb1886c3edc83d --query TerminatingInstances[0].CurrentState.Name --output text
+shutting-down
+(exit 0)
+$ aws ec2 wait instance-terminated --instance-ids i-01cdb1886c3edc83d
+(exit 0)
+$ aws ec2 delete-security-group --group-id sg-06cc1b31e3ecde061
+{
+    "Return": true,
+    "GroupId": "sg-06cc1b31e3ecde061"
+}
+(exit 0)
+$ aws ec2 disassociate-route-table --association-id rtbassoc-00548441bd9891b63
+(exit 0)
+$ aws ec2 delete-route-table --route-table-id rtb-0fc9d6519ab658b16
+(exit 0)
+$ aws ec2 detach-internet-gateway --internet-gateway-id igw-02ff94b98e8f44d17 --vpc-id vpc-0b70fc1f60b0af234
+(exit 0)
+$ aws ec2 delete-internet-gateway --internet-gateway-id igw-02ff94b98e8f44d17
+(exit 0)
+$ aws ec2 delete-subnet --subnet-id subnet-0b18bc655e35a2f38
+(exit 0)
+$ aws ec2 delete-vpc --vpc-id vpc-0b70fc1f60b0af234
+(exit 0)
+$ aws ec2 delete-key-pair --key-name codyssey-mission2-key
+{
+    "Return": true,
+    "KeyPairId": "key-0179722c714f4cf10"
+}
+(exit 0)
+(로컬 개인키 삭제)
+
+# 삭제 확인
+$ aws ec2 describe-instances --instance-ids i-01cdb1886c3edc83d --query Reservations[0].Instances[0].State.Name --output text
+terminated
+(exit 0)
+$ aws ec2 describe-volumes --volume-ids vol-0a2163b11b6c2fa28
+
+aws: [ERROR]: An error occurred (InvalidVolume.NotFound) when calling the DescribeVolumes operation: The volume 'vol-0a2163b11b6c2fa28' does not exist.
+(exit 254)
+$ aws ec2 describe-volumes --query Volumes[].VolumeId --output text
+(exit 0)
+$ aws ec2 describe-addresses --query Addresses[].PublicIp --output text
+(exit 0)
+$ aws ec2 describe-nat-gateways --filter Name=state,Values=pending,available --query NatGateways[].NatGatewayId --output text
+(exit 0)
+$ aws ec2 describe-internet-gateways --internet-gateway-ids igw-02ff94b98e8f44d17
+
+aws: [ERROR]: An error occurred (InvalidInternetGatewayID.NotFound) when calling the DescribeInternetGateways operation: The internetGateway ID 'igw-02ff94b98e8f44d17' does not exist
+(exit 254)
+$ aws ec2 describe-vpcs --vpc-ids vpc-0b70fc1f60b0af234
+
+aws: [ERROR]: An error occurred (InvalidVpcID.NotFound) when calling the DescribeVpcs operation: The vpc ID 'vpc-0b70fc1f60b0af234' does not exist
+(exit 254)
+$ aws ec2 describe-key-pairs --key-names codyssey-mission2-key
+
+aws: [ERROR]: An error occurred (InvalidKeyPair.NotFound) when calling the DescribeKeyPairs operation: The key pair 'codyssey-mission2-key' does not exist
+(exit 254)
+$ aws ec2 describe-vpcs --query Vpcs[].[VpcId,IsDefault] --output text
+vpc-0d5228ec567a13ddd	True
+(exit 0)
+
+# IAM 자격증명 정리
+$ aws iam list-access-keys --user-name codyssey-mission2 --query 'AccessKeyMetadata' --output text
+(빈 출력 = 액세스 키 0개)
+$ aws iam list-attached-user-policies --user-name codyssey-mission2 --query 'AttachedPolicies[].PolicyName' --output text
+codyssey-ec2-lab

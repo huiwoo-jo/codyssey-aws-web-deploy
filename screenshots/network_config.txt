@@ -1,0 +1,18 @@
+$ aws ec2 describe-route-tables --route-table-ids rtb-0fc9d6519ab658b16 --query 'RouteTables[0].Routes[].[DestinationCidrBlock,GatewayId,State]' --output table
+----------------------------------------------------
+|                DescribeRouteTables               |
++--------------+-------------------------+---------+
+|  10.0.0.0/16 |  local                  |  active |
+|  0.0.0.0/0   |  igw-02ff94b98e8f44d17  |  active |
++--------------+-------------------------+---------+
+$ aws ec2 describe-route-tables --route-table-ids rtb-0fc9d6519ab658b16 --query 'RouteTables[0].Associations[].SubnetId' --output text
+subnet-0b18bc655e35a2f38
+$ aws ec2 describe-internet-gateways --internet-gateway-ids igw-02ff94b98e8f44d17 --query 'InternetGateways[0].Attachments' --output text
+available	vpc-0b70fc1f60b0af234
+$ aws ec2 describe-security-groups --group-ids sg-06cc1b31e3ecde061 --query 'SecurityGroups[0].IpPermissions[].[IpProtocol,FromPort,ToPort,IpRanges[0].CidrIp]' --output table
+----------------------------------------
+|        DescribeSecurityGroups        |
++-----+-----+-----+--------------------+
+|  tcp|  80 |  80 |  0.0.0.0/0         |
+|  tcp|  22 |  22 |  116.35.8.x/32   |
++-----+-----+-----+--------------------+

@@ -1,0 +1,24 @@
+$ aws sts get-caller-identity --query Arn --output text
+arn:aws:iam::<ACCT>:user/codyssey-mission2
+
+$ aws iam list-attached-user-policies --user-name codyssey-mission2 --profile <admin>
+codyssey-ec2-lab
+
+$ aws s3 ls
+
+aws: [ERROR]: An error occurred (AccessDenied) when calling the ListBuckets operation: User: arn:aws:iam::<ACCT>:user/codyssey-mission2 is not authorized to perform: s3:ListAllMyBuckets because no identity-based policy allows the s3:ListAllMyBuckets action
+
+$ aws iam list-users
+
+aws: [ERROR]: An error occurred (AccessDenied) when calling the ListUsers operation: User: arn:aws:iam::<ACCT>:user/codyssey-mission2 is not authorized to perform: iam:ListUsers on resource: arn:aws:iam::<ACCT>:user/ because no identity-based policy allows the iam:ListUsers action. Go to https://us-east-1.console.aws.amazon.com/iam/home?region=us-east-1#/authorization-details/901iosy437opi0y4x4kmwkoa7 for complete details, or call the GetRequestAuthorizationDetails API with the following authorization id: 901iosy437opi0y4x4kmwkoa7
+
+$ aws rds describe-db-instances
+
+aws: [ERROR]: An error occurred (AccessDenied) when calling the DescribeDBInstances operation: User: arn:aws:iam::<ACCT>:user/codyssey-mission2 is not authorized to perform: rds:DescribeDBInstances on resource: arn:aws:rds:ap-northeast-2:<ACCT>:db:* because no identity-based policy allows the rds:DescribeDBInstances action
+
+$ aws ec2 describe-vpcs --region us-east-1
+
+aws: [ERROR]: An error occurred (UnauthorizedOperation) when calling the DescribeVpcs operation: You are not authorized to perform this operation. User: arn:aws:iam::<ACCT>:user/codyssey-mission2 is not authorized to perform: ec2:DescribeVpcs because no identity-based policy allows the ec2:DescribeVpcs action. Go to https://us-east-1.console.aws.amazon.com/iam/home?region=us-east-1#/authorization-details/8jxp2namh5876mqwt4yabid6v for complete details, or call the GetRequestAuthorizationDetails API with the following authorization id: 8jxp2namh5876mqwt4yabid6v
+
+$ aws ec2 describe-vpcs --region ap-northeast-2 --query 'Vpcs[].VpcId' --output text
+vpc-0d5228ec567a13ddd
