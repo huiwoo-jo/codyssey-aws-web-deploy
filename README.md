@@ -111,10 +111,12 @@ location = /health {
 ### 외부 접속 — 방식 (B) 선택
 
 - **선택한 방식:** (B) `GET http://<퍼블릭IP>/health` 호출 → 200과 고정 문구 `OK` 확인
-- **접속 정보:** `http://13.125.53.24/health` (실습 당시 퍼블릭 IP. 리소스 삭제 후 반납되어 지금은 접속되지 않음)
+- **접속 정보:** `http://13.125.197.186/health` (발표용 실행, 2026-11-18의 퍼블릭 IP. 발표 후 정리하면 반납되어 접속되지 않음)
+- 발표용 실행 증빙: [`screenshots/health_response_20261118.txt`](screenshots/health_response_20261118.txt)
+- 이전 실습(2026-11-15)의 기록은 `13.125.53.24`이며, 그 IP도 정리 후 반납되었습니다.
 
 ```
-$ curl -i http://13.125.53.24/health
+$ curl -i http://13.125.197.186/health
 HTTP/1.1 200 OK
 Server: nginx/1.30.6
 Content-Type: text/plain

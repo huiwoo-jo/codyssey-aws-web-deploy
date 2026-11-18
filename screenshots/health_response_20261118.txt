@@ -1,0 +1,9 @@
+$ curl -i http://13.125.197.186/health
+HTTP/1.1 200 OK
+Server: nginx/1.30.6
+Date: Wed, 18 Nov 2026 06:53:04 GMT
+Content-Type: text/plain
+Content-Length: 3
+Connection: keep-alive
+
+OK
